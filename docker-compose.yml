@@ -1,0 +1,33 @@
+version: '2.4'
+x-database-variables: &database-variables
+  SPRING_DATASOURCE_URL: jdbc:mysql://quotation-manager_mysql:3306/bootdb?createDatabaseIfNotExist=true
+  SPRING_DATASOURCE_USERNAME: root
+  SPRING_DATASOURCE_PASSWORD: root
+  EXTERNAL_API_URL: http://stock-manager:8080
+services:
+  db:
+    image: mysql
+    container_name: quotation-manager_mysql
+    environment: 
+      MYSQL_ROOT_PASSWORD: root
+    ports: 
+      - "3306:3306"
+    volumes:
+      - quotation-manager_data:/var/lib/mysql
+  stock-manager:
+    image: lucasvilela/stock-manager
+    container_name: stock-manager
+    ports: 
+      - "8080:8080"
+    volumes:
+      - stock_data:/var/lib/stock
+  stock-manager-inatel:
+    image: lucastellaroli/quotation-manager:0.0.1-SNAPSHOT
+    ports:
+    - "8081:8081"
+    environment:
+      <<: *database-variables
+
+volumes:
+  quotation-manager_data:
+  stock_data:
